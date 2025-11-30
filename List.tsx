@@ -1,27 +1,27 @@
-
 import React from 'react';
 import { View, Text, FlatList, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 
 import styles from './styles'
 export interface DepositorData {
-    номер_вклада: string;
-    название_вклада: string;
-    фио_вкладчика: string;
-    сумма_вклада: number;
-    дата_вложения: string;
-    процент_начисления: number;
-    общая_сумма_с_начислениями: number;
+    номер_вклада: string
+    название_вклада: string
+    фио_вкладчика: string
+    сумма_вклада: number
+    дата_вложения: string
+    процент_начисления: number
 }
 
 interface ListProps {
-    data: DepositorData[];
-    totalSum: number;
-    asc: boolean;
-    onFilter: (text: string) => void;
-    onSort: () => void;
+    data: DepositorData[]
+    totalSum: number
+    asc: boolean
+    onFilter: (text: string) => void
+    onSort: () => void
+    onEdit: (item: DepositorData) => void
+    onDelete: (item: DepositorData) => void 
 }
 
-const ListItem = ({ item }: { item: DepositorData }) => (
+const ListItem = ({ item, onEdit, onDelete }: { item: DepositorData, onEdit: (item: DepositorData) => void, onDelete: (item: DepositorData) => void }) => (
     <View style={styles.item}>
         <Text style={styles.title}>{item.название_вклада}</Text>
         <Text>ФИО: {item.фио_вкладчика}</Text>
@@ -29,13 +29,18 @@ const ListItem = ({ item }: { item: DepositorData }) => (
         <Text style={styles.totalSum}>
             Процент начисления: {item.процент_начисления}%
         </Text>
-        <Text style={styles.totalSum}>
-            Общая сумма: {item.общая_сумма_с_начислениями} руб.
-        </Text>
+        <View >
+            <TouchableOpacity onPress={() => onEdit(item)}>
+                <Text>Редактировать</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => onDelete(item)}>
+                <Text>Удалить</Text>
+            </TouchableOpacity>
+        </View>
     </View>
 );
 
-export default function List({ data, totalSum, asc, onFilter, onSort }: ListProps) {
+export default function List({ data, totalSum, asc, onFilter, onSort, onEdit, onDelete }: ListProps) {
     return (
         <View style={styles.listContainer}>
             <Text style={styles.header}>🐿️Ведомость вкладов 🐿️</Text>
@@ -52,7 +57,7 @@ export default function List({ data, totalSum, asc, onFilter, onSort }: ListProp
 
             <FlatList
                 data={data}
-                renderItem={({ item }) => <ListItem item={item} />}
+                renderItem={({ item }) => <ListItem item={item} onEdit={onEdit} onDelete={onDelete} />}
                 keyExtractor={(item) => item.фио_вкладчика + item.номер_вклада}
             />
             
